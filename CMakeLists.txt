@@ -3,10 +3,11 @@ project(astartvisualizer)
 find_package(Qt4 REQUIRED)
 
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
-include_directories(inluce/)
+include_directories(include/)
 
 set(AStartVisualizer_SRCS
 	src/main.cpp
+	src/mainwindow.cpp
 )
 
 qt4_automoc(${AStartVisualizer_SRCS})

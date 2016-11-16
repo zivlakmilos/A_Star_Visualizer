@@ -10,6 +10,13 @@ public:
     virtual ~MainWindow(void);
     
 private:
+    void setupGui(void);
+    void setupMenus(void);
+    
+    QAction *m_actionFileNew;
+    QAction *m_actionFileQuit;
+    
+    QAction *m_actionHelpAbout;
 };
 
 #endif // _MAIN_WINDOW_H_

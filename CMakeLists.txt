@@ -8,6 +8,7 @@ include_directories(include/)
 set(AStartVisualizer_SRCS
 	src/main.cpp
 	src/mainwindow.cpp
+	src/wastar.cpp
 )
 
 qt4_automoc(${AStartVisualizer_SRCS})

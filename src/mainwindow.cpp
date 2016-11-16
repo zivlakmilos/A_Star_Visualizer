@@ -3,6 +3,8 @@
 #include <QCoreApplication>
 #include <QtGui>
 
+#include "wastar.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -49,6 +51,8 @@ void MainWindow::setupGui(void)
     /*
      * Setup main widget
      */
+    m_centralWidget = new WAStar(this);
+    setCentralWidget(m_centralWidget);
 }
 
 void MainWindow::setupMenus(void)

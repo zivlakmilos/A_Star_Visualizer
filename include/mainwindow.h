@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class WAStar;
+
 class MainWindow : public QMainWindow
 {
 public:
@@ -17,6 +19,8 @@ private:
     QAction *m_actionFileQuit;
     
     QAction *m_actionHelpAbout;
+    
+    WAStar *m_centralWidget;
 };
 
 #endif // _MAIN_WINDOW_H_

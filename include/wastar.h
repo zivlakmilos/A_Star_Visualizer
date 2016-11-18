@@ -5,6 +5,8 @@
 
 class WAStar : public QWidget
 {
+    Q_OBJECT
+    
 public:
     WAStar(QWidget *parent = 0);
     virtual ~WAStar(void);

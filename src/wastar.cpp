@@ -28,6 +28,8 @@ void WAStar::newMap(void)
     m_table = new Cell*[m_width * m_height];
     for(int i = 0; i < m_width * m_height; i++)
         m_table[i] = new Cell(this);
+    m_table[m_height / 2 * m_width + 2]->state(Cell::StateStart);
+    m_table[m_height / 2 * m_width + m_width - 3]->state(Cell::StateEnd);
 }
 
 void WAStar::paintEvent(QPaintEvent *event)
@@ -137,8 +139,24 @@ void WAStar::mouseMoveEvent(QMouseEvent *event)
     if(pos != m_oldPos)
     {
         Cell *cell = m_table[pos.y() * m_width + pos.x()];
+        Cell *oldCell = m_table[m_oldPos.y() * m_width + m_oldPos.x()];
         if(m_tool == WAStar::ToolToggleBlock)
             cell->toggleBlockState();
+        else if(m_tool == WAStar::ToolMoveStart)
+        {
+            if(cell->state() != Cell::StateFree)
+                return;
+            
+            cell->state(Cell::StateStart);
+            oldCell->state(Cell::StateFree);
+        } else if(m_tool == WAStar::ToolMoveEnd)
+        {
+            if(cell->state() != Cell::StateFree)
+                return;
+            
+            cell->state(Cell::StateEnd);
+            oldCell->state(Cell::StateFree);
+        }
     }
     
     m_oldPos = pos;

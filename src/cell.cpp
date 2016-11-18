@@ -17,3 +17,11 @@ void Cell::calculate(void)
 {
     m_f = m_g + m_h;
 }
+
+void Cell::toggleBlockState(void)
+{
+    if(m_state == Cell::StateFree)
+        m_state = Cell::StateBlock;
+    else if(m_state == Cell::StateBlock)
+        m_state = Cell::StateFree;
+}

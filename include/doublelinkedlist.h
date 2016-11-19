@@ -17,6 +17,9 @@ public:
     virtual void appendBack(T data);
     virtual void appendFront(T data);
     virtual void remove(unsigned int index);
+    virtual void pop(void);
+    virtual void popBack(void);
+    virtual void popFront(void);
     
     T &operator[](unsigned int index) const;
     T &operator[](unsigned int index);

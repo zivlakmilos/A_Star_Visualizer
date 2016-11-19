@@ -134,8 +134,38 @@ void DoubleLinkedList<T>::remove(unsigned int index)
     ListNode<T> *parent = node->m_parent;
     ListNode<T> *child = node->m_child;
     
-    parent->m_child = child;
-    child->m_parent = parent;
+    if(parent)
+        parent->m_child = child;
+    if(child)
+        child->m_parent = parent;
+    
+    delete node;
+    m_count--;
+}
+
+template<typename T>
+void DoubleLinkedList<T>::pop(void)
+{
+    popBack();
+}
+
+template<typename T>
+void DoubleLinkedList<T>::popBack(void)
+{
+    ListNode<T> *node = m_last;
+    m_last = m_last->m_parent;
+    m_last->m_child = nullptr;
+    
+    delete node;
+    m_count--;
+}
+
+template<typename T>
+void DoubleLinkedList<T>::popFront(void)
+{
+    ListNode<T> *node = m_first;
+    m_first = m_first->m_child;
+    m_first->m_parent = nullptr;
     
     delete node;
     m_count--;

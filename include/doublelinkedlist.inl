@@ -32,14 +32,7 @@ DoubleLinkedList<T>::DoubleLinkedList(void)
 template<typename T>
 DoubleLinkedList<T>::~DoubleLinkedList(void)
 {
-    ListNode<T> *node = m_first;
-    
-    while(node)
-    {
-        ListNode<T> *tmp = node->m_child;
-        delete node;
-        node = tmp;
-    }
+    clear();
 }
 
 template<typename T>
@@ -60,6 +53,7 @@ void DoubleLinkedList<T>::appendBack(T data)
     ListNode<T> *node = new ListNode<T>(data);
     m_last->m_child = node;
     node->m_parent = m_last;
+    node->m_child = nullptr;
     m_last = node;
     m_count++;
 }
@@ -75,6 +69,7 @@ void DoubleLinkedList<T>::appendFront(T data)
     
     ListNode<T> *node = new ListNode<T>(data);
     node->m_child = m_first;
+    node->m_parent = nullptr;
     m_first->m_parent = node;
     m_first = node;
     m_count++;
@@ -169,4 +164,21 @@ void DoubleLinkedList<T>::popFront(void)
     
     delete node;
     m_count--;
+}
+
+template<typename T>
+void DoubleLinkedList<T>::clear(void)
+{
+    ListNode<T> *node = m_first;
+    
+    while(node)
+    {
+        ListNode<T> *tmp = node->m_child;
+        delete node;
+        node = tmp;
+    }
+    
+    m_first = nullptr;
+    m_last = nullptr;
+    m_count = 0;
 }

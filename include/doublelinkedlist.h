@@ -20,6 +20,7 @@ public:
     virtual void pop(void);
     virtual void popBack(void);
     virtual void popFront(void);
+    virtual void clear(void);
     
     T &operator[](unsigned int index) const;
     T &operator[](unsigned int index);

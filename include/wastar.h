@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-class Cell;
+#include "cell.h"
+#include "doublelinkedlist.h"
 
 class WAStar : public QWidget
 {
@@ -33,16 +34,27 @@ private:
     void clear(void);
     QPoint mapCoordsToGrid(const QPoint &position);
     
+    void calculateStartValues(void);
+    CellValue findBestStep(int x, int y);
+    CellValue calculate(int x, int y, int h);
+    
     int m_width;
     int m_height;
     
     Cell **m_table;
+    DoubleLinkedList<CellValue> m_path;
     
     Tool m_tool;
     QPoint m_oldPos;
     
+    int m_x;
+    int m_y;
+    int m_endX;
+    int m_endY;
+    
 public slots:
     void newMap(void);
+    void findPath(void);
 };
 
 #endif // _W_STAR_H_

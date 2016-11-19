@@ -35,6 +35,12 @@ MainWindow::~MainWindow(void)
 void MainWindow::setupGui(void)
 {
     /*
+     * Setup main widget
+     */
+    m_centralWidget = new WAStar(this);
+    setCentralWidget(m_centralWidget);
+    
+    /*
      * Setup menus
      */
     setupMenus();
@@ -47,12 +53,6 @@ void MainWindow::setupGui(void)
      * Status bar
      */
     statusBar();
-    
-    /*
-     * Setup main widget
-     */
-    m_centralWidget = new WAStar(this);
-    setCentralWidget(m_centralWidget);
 }
 
 void MainWindow::setupMenus(void)
@@ -63,6 +63,13 @@ void MainWindow::setupMenus(void)
     
     m_actionFileNew = new QAction(tr("&New"), this);
     m_actionFileNew->setShortcut(Qt::Key_N | Qt::CTRL);
+    connect(m_actionFileNew, SIGNAL(triggered(bool)),
+            m_centralWidget, SLOT(newMap()));
+    
+    m_actionFileStart = new QAction(tr("&Start"), this);
+    m_actionFileStart->setShortcut(Qt::Key_S | Qt::CTRL);
+    connect(m_actionFileStart, SIGNAL(triggered(bool)),
+            m_centralWidget, SLOT(findPath()));
     
     m_actionHelpAbout = new QAction(tr("&About"), this);
     
@@ -77,6 +84,7 @@ void MainWindow::setupMenus(void)
     
     QMenu *menuFile = menuBar()->addMenu(tr("&File"));
     menuFile->addAction(m_actionFileNew);
+    menuFile->addAction(m_actionFileStart);
     menuFile->addSeparator();
     menuFile->addAction(m_actionFileQuit);
     

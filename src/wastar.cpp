@@ -2,8 +2,6 @@
 
 #include <QtGui>
 
-#include "cell.h"
-
 WAStar::WAStar(QWidget *parent)
     : QWidget(parent),
       m_width(9),
@@ -75,6 +73,8 @@ void WAStar::paintEvent(QPaintEvent *event)
                 brush = Qt::red;
             else if(cellState == Cell::StateEnd)
                 brush = Qt::blue;
+            else if(cellState == Cell::StateStep)
+                brush = Qt::DiagCrossPattern;
             
             painter.setBrush(brush);
             painter.drawRect(rect);
@@ -175,4 +175,92 @@ QPoint WAStar::mapCoordsToGrid(const QPoint &position)
     pos.setY(position.y() * m_height / height());
     
     return pos;
+}
+
+void WAStar::findPath(void)
+{
+    calculateStartValues();
+    m_path.clear();
+    
+    for(CellValue nextStep = findBestStep(m_x, m_y);
+        nextStep.state == Cell::StateFree;
+        nextStep = findBestStep(m_x, m_y))
+    {
+        m_x = nextStep.x;
+        m_y = nextStep.y;
+        
+        m_path.append(nextStep);
+    }
+    
+    for(int i = 0; i < m_path.count(); i++)
+        m_table[m_path[i].y * m_width + m_path[i].x]->state(Cell::StateStep);
+    
+    repaint();
+}
+
+CellValue WAStar::findBestStep(int x, int y)
+{
+    CellValue result;
+    int x2, y2;
+    CellValue values[8];
+    
+    values[0] = calculate(x - 1, y - 1, 14);
+    values[1] = calculate(x, y - 1, 10);
+    values[2] = calculate(x + 1, y - 1, 14);
+    values[3] = calculate(x + 1, y, 10);
+    values[4] = calculate(x + 1, y + 1, 14);
+    values[5] = calculate(x, y + 1, 10);
+    values[6] = calculate(x - 1, y + 1, 14);
+    values[7] = calculate(x - 1, y, 10);
+    
+    result.state = Cell::StateError;
+    result.f = 10000;
+    for(int i = 0; i < 8; i++)
+        if(values[i].f < result.f && values[i].state != Cell::StateBlock)
+            result = values[i];
+    
+    return result;
+}
+
+CellValue WAStar::calculate(int x, int y, int h)
+{
+    CellValue result;
+    
+    if(x < 0 || y < 0 ||
+       x >= m_width || y >= m_height)
+    {
+        result.state = Cell::StateBlock;
+    } else
+    {
+        result.state = m_table[y * m_width + x]->state();
+        result.g = abs(m_endX - x) + abs(m_endY - y);
+        result.h = h;
+        result.f = result.g + result.h;
+        result.x = x;
+        result.y = y;
+    }
+    
+    return result;
+}
+
+void WAStar::calculateStartValues(void)
+{
+    int founded = 0;
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        Cell *cell = m_table[i];
+        if(cell->state() == Cell::StateStart)
+        {
+            m_y = i / m_width;
+            m_x = i % m_width;
+            founded++;
+        } else if(cell->state() == Cell::StateEnd)
+        {
+            m_endY = i / m_width;
+            m_endX = i % m_width;
+            founded++;
+        }
+        if(founded >= 2)
+            break;
+    }
 }

@@ -7,6 +7,8 @@ class WAStar;
 
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT
+    
 public:
     MainWindow(QWidget *parent = 0);
     virtual ~MainWindow(void);
@@ -16,6 +18,7 @@ private:
     void setupMenus(void);
     
     QAction *m_actionFileNew;
+    QAction *m_actionFileStart;
     QAction *m_actionFileQuit;
     
     QAction *m_actionHelpAbout;

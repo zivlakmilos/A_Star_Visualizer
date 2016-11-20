@@ -27,6 +27,7 @@ private:
     
 private slots:
     void newMap(void);
+    void about(void);
 };
 
 #endif // _MAIN_WINDOW_H_

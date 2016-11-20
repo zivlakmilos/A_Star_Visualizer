@@ -73,6 +73,9 @@ void MainWindow::setupMenus(void)
             m_centralWidget, SLOT(findPath()));
     
     m_actionHelpAbout = new QAction(tr("&About"), this);
+    m_actionHelpAbout->setShortcut(Qt::Key_F1);
+    connect(m_actionHelpAbout, SIGNAL(triggered(bool)),
+            this, SLOT(about()));
     
     m_actionFileQuit = new QAction(tr("&Quit"), this);
     m_actionFileQuit->setShortcut(Qt::Key_Q | Qt::CTRL);
@@ -104,4 +107,21 @@ void MainWindow::newMap(void)
         
         m_centralWidget->newMap(width, height);
     }
+}
+
+void MainWindow::about(void)
+{
+    QString msg = tr("<b>%1</b><hr /><br />"
+                     "site:     %2<br />"
+                     "github:   %3<br />"
+                     "linkedin: %4<br />"
+                     "email:    %5<br />"
+                     "phone:    %6").arg(QCoreApplication::organizationName(),
+                                         QCoreApplication::organizationDomain(),
+                                         tr("https://github.com/zivlakmilos/"),
+                                         tr("https://rs.linkedin.com/in/zivlakmilos/"),
+                                         tr("zivlakmilos@gmail.com"),
+                                         tr("061/668-3739"));
+    
+    QMessageBox::about(this, QCoreApplication::applicationName(), msg);
 }

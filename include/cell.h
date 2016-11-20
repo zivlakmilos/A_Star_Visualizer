@@ -22,12 +22,12 @@ public:
     ~Cell(void);
     
     enum State {
-        StateFree = 0,
-        StateBlock,
-        StateStart,
-        StateEnd,
-        StateStep,
-        StateError = -1
+        StateFree = 0x01,
+        StateBlock = 0x02,
+        StateStart = 0x04,
+        StateEnd = 0x08,
+        StateStep = 0x10,
+        StateError = -0x01
     };
     
     void toggleBlockState(void);

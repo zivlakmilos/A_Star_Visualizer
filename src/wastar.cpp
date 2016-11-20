@@ -190,10 +190,10 @@ void WAStar::findPath(void)
         m_y = nextStep.y;
         
         m_path.append(nextStep);
+        m_table[nextStep.y * m_width + nextStep.x]->state(Cell::StateStep);
     }
-    
-    for(int i = 0; i < m_path.count(); i++)
-        m_table[m_path[i].y * m_width + m_path[i].x]->state(Cell::StateStep);
+    CellValue ns = findBestStep(m_x, m_y);
+    qDebug() << ns.state;
     
     repaint();
 }
@@ -216,7 +216,7 @@ CellValue WAStar::findBestStep(int x, int y)
     result.state = Cell::StateError;
     result.f = 10000;
     for(int i = 0; i < 8; i++)
-        if(values[i].f < result.f && values[i].state != Cell::StateBlock)
+        if(values[i].f < result.f && values[i].state & (Cell::StateFree | Cell::StateEnd))
             result = values[i];
     
     return result;

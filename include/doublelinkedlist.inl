@@ -136,6 +136,12 @@ void DoubleLinkedList<T>::remove(unsigned int index)
     
     delete node;
     m_count--;
+    
+    if(m_count == 0)
+    {
+        m_first = nullptr;
+        m_last = nullptr;
+    }
 }
 
 template<typename T>
@@ -147,23 +153,15 @@ void DoubleLinkedList<T>::pop(void)
 template<typename T>
 void DoubleLinkedList<T>::popBack(void)
 {
-    ListNode<T> *node = m_last;
-    m_last = m_last->m_parent;
-    m_last->m_child = nullptr;
-    
-    delete node;
-    m_count--;
+    if(m_count > 0)
+        remove(m_count - 1);
 }
 
 template<typename T>
 void DoubleLinkedList<T>::popFront(void)
 {
-    ListNode<T> *node = m_first;
-    m_first = m_first->m_child;
-    m_first->m_parent = nullptr;
-    
-    delete node;
-    m_count--;
+    if(m_count > 0)
+        remove(0);
 }
 
 template<typename T>
@@ -181,4 +179,13 @@ void DoubleLinkedList<T>::clear(void)
     m_first = nullptr;
     m_last = nullptr;
     m_count = 0;
+}
+
+template<typename T>
+bool DoubleLinkedList<T>::isEmpty(void)
+{
+    if(m_first)
+        return false;
+    
+    return true;
 }

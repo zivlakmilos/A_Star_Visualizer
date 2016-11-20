@@ -21,6 +21,7 @@ public:
     virtual void popBack(void);
     virtual void popFront(void);
     virtual void clear(void);
+    virtual bool isEmpty(void);
     
     T &operator[](unsigned int index) const;
     T &operator[](unsigned int index);

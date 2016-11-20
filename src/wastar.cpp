@@ -4,14 +4,12 @@
 
 WAStar::WAStar(QWidget *parent)
     : QWidget(parent),
-      m_width(9),
-      m_height(9),
       m_table(nullptr),
       m_tool(ToolSelection)
 {
     setMouseTracking(true);
     
-    newMap();
+    newMap(9, 9);
 }
 
 WAStar::~WAStar(void)
@@ -19,9 +17,11 @@ WAStar::~WAStar(void)
     clear();
 }
 
-void WAStar::newMap(void)
+void WAStar::newMap(int width, int height)
 {
     clear();
+    m_width = width;
+    m_height = height;
     
     m_table = new Cell*[m_width * m_height];
     for(int i = 0; i < m_width * m_height; i++)
@@ -192,8 +192,6 @@ void WAStar::findPath(void)
         m_path.append(nextStep);
         m_table[nextStep.y * m_width + nextStep.x]->state(Cell::StateStep);
     }
-    CellValue ns = findBestStep(m_x, m_y);
-    qDebug() << ns.state;
     
     repaint();
 }
@@ -201,7 +199,6 @@ void WAStar::findPath(void)
 CellValue WAStar::findBestStep(int x, int y)
 {
     CellValue result;
-    int x2, y2;
     CellValue values[8];
     
     values[0] = calculate(x - 1, y - 1, 14);

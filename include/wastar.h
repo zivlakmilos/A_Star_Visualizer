@@ -53,7 +53,7 @@ private:
     int m_endY;
     
 public slots:
-    void newMap(void);
+    void newMap(int width, int height);
     void findPath(void);
 };
 

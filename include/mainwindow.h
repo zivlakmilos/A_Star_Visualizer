@@ -24,6 +24,9 @@ private:
     QAction *m_actionHelpAbout;
     
     WAStar *m_centralWidget;
+    
+private slots:
+    void newMap(void);
 };
 
 #endif // _MAIN_WINDOW_H_

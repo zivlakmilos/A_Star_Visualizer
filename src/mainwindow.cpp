@@ -4,6 +4,7 @@
 #include <QtGui>
 
 #include "wastar.h"
+#include "dnew.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -64,7 +65,7 @@ void MainWindow::setupMenus(void)
     m_actionFileNew = new QAction(tr("&New"), this);
     m_actionFileNew->setShortcut(Qt::Key_N | Qt::CTRL);
     connect(m_actionFileNew, SIGNAL(triggered(bool)),
-            m_centralWidget, SLOT(newMap()));
+            this, SLOT(newMap()));
     
     m_actionFileStart = new QAction(tr("&Start"), this);
     m_actionFileStart->setShortcut(Qt::Key_S | Qt::CTRL);
@@ -90,4 +91,17 @@ void MainWindow::setupMenus(void)
     
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
     menuHelp->addAction(m_actionHelpAbout);
+}
+
+void MainWindow::newMap(void)
+{
+    DNew *dlgNew = new DNew(this);
+    
+    if(dlgNew->exec() == QDialog::Accepted)
+    {
+        int width, height;
+        dlgNew->size(&width, &height);
+        
+        m_centralWidget->newMap(width, height);
+    }
 }

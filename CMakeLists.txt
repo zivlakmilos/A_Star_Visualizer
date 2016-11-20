@@ -16,12 +16,14 @@ set(AStartVisualizer_SRCS
     src/wastar.cpp
     src/zexception.cpp
     src/cell.cpp
+    src/dnew.cpp
 )
 
 set(AStartVisualizer_HEADERS
     include/mainwindow.h
     include/wastar.h
     include/cell.h
+    include/dnew.h
 )
 
 foreach(MOCheader ${AStartVisualizer_HEADERS})

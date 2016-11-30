@@ -223,7 +223,6 @@ void WAStar::findPath(void)
             current = bestStep;
             m_close.append(current);
             m_open.remove(bestStepIndex);
-            //current->state(Cell::StateStep);
             
             repaint();
         }

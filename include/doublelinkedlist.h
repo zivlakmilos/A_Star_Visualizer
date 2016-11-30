@@ -5,6 +5,8 @@
 
 template<typename T>
 class ListNode;
+template<typename T>
+class DoubleLinkedListIterator;
 
 template<typename T>
 class DoubleLinkedList
@@ -23,13 +25,18 @@ public:
     virtual void clear(void);
     virtual bool isEmpty(void);
     
+    virtual DoubleLinkedListIterator<T> start(void);
+    virtual DoubleLinkedListIterator<T> end(void);
+    
     T &operator[](unsigned int index) const;
     T &operator[](unsigned int index);
     
-    inline unsigned int count(void) { return m_count; };
-    inline unsigned int size(void) { return count(); };
+    inline const unsigned int &count(void) const { return m_count; };
+    inline const unsigned int &size(void) const { return count(); };
     
-private:
+    typedef DoubleLinkedListIterator<T> iterator;
+    
+protected:
     void createRoot(T data);
     ListNode<T> *getNode(unsigned int index);
     
@@ -39,19 +46,41 @@ private:
 };
 
 template<typename T>
+class DoubleLinkedListIterator
+{
+    friend DoubleLinkedList<T>;
+public:
+    explicit DoubleLinkedListIterator(ListNode<T> *node);
+    virtual ~DoubleLinkedListIterator(void);
+    
+    virtual DoubleLinkedListIterator<T> &operator++(void);
+    virtual DoubleLinkedListIterator<T> &operator--(void);
+    virtual DoubleLinkedListIterator<T> operator++(int);
+    virtual DoubleLinkedListIterator<T> operator--(int);
+    virtual bool operator==(const DoubleLinkedListIterator<T> &rhs);
+    virtual bool operator!=(const DoubleLinkedListIterator<T> &rhs);
+    
+    virtual inline const T &value(void) const { return m_node->m_data; } ;
+    
+protected:
+    ListNode<T> *m_node;
+};
+
+template<typename T>
 class ListNode
 {
     friend DoubleLinkedList<T>;
+    friend DoubleLinkedListIterator<T>;
 public:
     ListNode(T data);
     virtual ~ListNode(void);
     
     inline T &data(void) { return m_data; };
     
-private:
+protected:
     T m_data;
-    ListNode *m_child;
-    ListNode *m_parent;
+    ListNode<T> *m_child;
+    ListNode<T> *m_parent;
 };
 
 #include "doublelinkedlist.inl"

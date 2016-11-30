@@ -111,7 +111,7 @@ ListNode<T> *DoubleLinkedList<T>::getNode(unsigned int index)
     
     for(int i = 0; i < count; i++)
     {
-        if(!node)
+        if(node)
             break;
         node = fromBegin ? node->m_child : node->m_parent;
     }
@@ -188,4 +188,71 @@ bool DoubleLinkedList<T>::isEmpty(void)
         return false;
     
     return true;
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> DoubleLinkedList<T>::start(void)
+{
+    return DoubleLinkedListIterator<T>(m_first);
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> DoubleLinkedList<T>::end(void)
+{
+    return DoubleLinkedListIterator<T>(m_last);
+}
+
+/*
+ * DoubleLinkedListIterator
+ */
+
+template<typename T>
+DoubleLinkedListIterator<T>::DoubleLinkedListIterator(ListNode<T> *node)
+    : m_node(node)
+{
+}
+
+template<typename T>
+DoubleLinkedListIterator<T>::~DoubleLinkedListIterator(void)
+{
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> &DoubleLinkedListIterator<T>::operator++(void)
+{
+    if(m_node)
+        m_node = m_node->m_child;
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> &DoubleLinkedListIterator<T>::operator--(void)
+{
+    if(m_node)
+        m_node = m_node->m_parent;
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> DoubleLinkedListIterator<T>::operator++(int)
+{
+    operator++();
+}
+
+template<typename T>
+DoubleLinkedListIterator<T> DoubleLinkedListIterator<T>::operator--(int)
+{
+    operator--();
+}
+
+template<typename T>
+bool DoubleLinkedListIterator<T>::operator==(const DoubleLinkedListIterator<T> &rhs)
+{
+    if(!m_node)
+        return false;
+    return m_node == rhs.m_node;
+}
+
+template<typename T>
+bool DoubleLinkedListIterator<T>::operator!=(const DoubleLinkedListIterator<T> &rhs)
+{
+    return !DoubleLinkedListIterator::operator==(rhs);
 }

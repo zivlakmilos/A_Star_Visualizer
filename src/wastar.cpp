@@ -24,8 +24,9 @@ void WAStar::newMap(int width, int height)
     m_height = height;
     
     m_table = new Cell*[m_width * m_height];
-    for(int i = 0; i < m_width * m_height; i++)
-        m_table[i] = new Cell(this);
+    for(int y = 0; y < m_height; y++)
+        for(int x = 0; x < m_width; x++)
+            m_table[y * m_width + x] = new Cell(x, y, this);
     m_table[m_height / 2 * m_width + 2]->state(Cell::StateStart);
     m_table[m_height / 2 * m_width + m_width - 3]->state(Cell::StateEnd);
 }
@@ -60,7 +61,7 @@ void WAStar::paintEvent(QPaintEvent *event)
         for(int j = 0; j < m_width; j++)
         {
             Cell::State cellState = m_table[i * m_width + j]->state();
-            if(cellState == Cell::StateFree)
+            if(cellState & (Cell::StateFree))
                 continue;
             
             QBrush brush = Qt::black;
@@ -74,6 +75,8 @@ void WAStar::paintEvent(QPaintEvent *event)
             else if(cellState == Cell::StateEnd)
                 brush = Qt::blue;
             else if(cellState == Cell::StateStep)
+                brush = Qt::yellow;
+            else if(cellState == Cell::StateChecked)
                 brush = Qt::DiagCrossPattern;
             
             painter.setBrush(brush);
@@ -180,62 +183,108 @@ QPoint WAStar::mapCoordsToGrid(const QPoint &position)
 void WAStar::findPath(void)
 {
     calculateStartValues();
-    m_path.clear();
+    m_close.clear();
+    m_open.clear();
     
-    for(CellValue nextStep = findBestStep(m_x, m_y);
-        nextStep.state == Cell::StateFree;
-        nextStep = findBestStep(m_x, m_y))
+    Cell *current = calculate(m_startX, m_startY, 0);
+    m_close.append(current);
+    
+    while(current->state() != Cell::StateEnd)
     {
-        m_x = nextStep.x;
-        m_y = nextStep.y;
+        calculateNeighbors(current);
         
-        m_path.append(nextStep);
-        m_table[nextStep.y * m_width + nextStep.x]->state(Cell::StateStep);
+        if(!m_open.isEmpty())
+        {
+            int bestStepIndex = 0;
+            Cell *bestStep = m_open[0];
+            /*
+            for(int i = 1; i < m_open.count(); i++)
+            {
+                if(m_open[i]->f() < bestStep->f())
+                {
+                    bestStep = m_open[i];
+                    bestStepIndex = i;
+                }
+            }
+            */
+            
+            DoubleLinkedList<Cell *>::iterator it = m_open.start();
+            int i;
+            for(++it, i = 1; it != m_open.end(); it++, i++)
+            {
+                if(it.value()->f() < bestStep->f())
+                {
+                    bestStep = it.value();
+                    bestStepIndex = i;
+                }
+            }
+            
+            current = bestStep;
+            m_close.append(current);
+            m_open.remove(bestStepIndex);
+            current->state(Cell::StateStep);
+            
+            repaint();
+        }
     }
     
-    repaint();
+    current = current->parent();
+    while(current->state() != Cell::StateStart)
+    {
+        current->state(Cell::StateStep);
+        current = current->parent();
+        repaint();
+    }
 }
 
-CellValue WAStar::findBestStep(int x, int y)
+void WAStar::calculateNeighbors(Cell *current)
 {
-    CellValue result;
-    CellValue values[8];
+    Cell *values[8];
     
-    values[0] = calculate(x - 1, y - 1, 14);
-    values[1] = calculate(x, y - 1, 10);
-    values[2] = calculate(x + 1, y - 1, 14);
-    values[3] = calculate(x + 1, y, 10);
-    values[4] = calculate(x + 1, y + 1, 14);
-    values[5] = calculate(x, y + 1, 10);
-    values[6] = calculate(x - 1, y + 1, 14);
-    values[7] = calculate(x - 1, y, 10);
+    int x = current->x();
+    int y = current->y();
+    int g = current->g();
     
-    result.state = Cell::StateError;
-    result.f = 10000;
-    for(int i = 0; i < 8; i++)
-        if(values[i].f < result.f && values[i].state & (Cell::StateFree | Cell::StateEnd))
-            result = values[i];
+    values[0] = calculate(x - 1, y - 1, g + 14);
+    values[1] = calculate(x, y - 1, g + 10);
+    values[2] = calculate(x + 1, y - 1, g + 14);
+    values[3] = calculate(x + 1, y, g + 10);
+    values[4] = calculate(x + 1, y + 1, g + 14);
+    values[5] = calculate(x, y + 1, g + 10);
+    values[6] = calculate(x - 1, y + 1, g + 14);
+    values[7] = calculate(x - 1, y, g + 10);
     
-    return result;
+    for(int i = 0 ; i < 8; i++)
+    {
+        if(values[i])
+        {
+            if(values[i]->state() != Cell::StateStart &&
+               values[i]->state() != Cell::StateEnd)
+                values[i]->state(Cell::StateChecked);
+                
+            values[i]->parent(current);
+            m_open.append(values[i]);
+        }
+    }
 }
 
-CellValue WAStar::calculate(int x, int y, int h)
+Cell *WAStar::calculate(int x, int y, int g)
 {
-    CellValue result;
-    
     if(x < 0 || y < 0 ||
        x >= m_width || y >= m_height)
-    {
-        result.state = Cell::StateBlock;
-    } else
-    {
-        result.state = m_table[y * m_width + x]->state();
-        result.g = abs(m_endX - x) + abs(m_endY - y);
-        result.h = h;
-        result.f = result.g + result.h;
-        result.x = x;
-        result.y = y;
-    }
+        return nullptr;
+    
+    Cell *result = m_table[y * m_width + x];
+    
+    if(result->state() == Cell::StateBlock ||
+       (result->state() == Cell::StateChecked &&
+        result->g() <= g))
+        return nullptr;
+    
+    result->h(abs(m_endX - x) + abs(m_endY - y));
+    result->h(result->h() * 10);
+    result->g(g);
+    result->calculate();
     
     return result;
 }
@@ -248,8 +297,8 @@ void WAStar::calculateStartValues(void)
         Cell *cell = m_table[i];
         if(cell->state() == Cell::StateStart)
         {
-            m_y = i / m_width;
-            m_x = i % m_width;
+            m_startY = i / m_width;
+            m_startX = i % m_width;
             founded++;
         } else if(cell->state() == Cell::StateEnd)
         {

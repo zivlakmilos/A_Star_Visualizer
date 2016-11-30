@@ -35,20 +35,21 @@ private:
     QPoint mapCoordsToGrid(const QPoint &position);
     
     void calculateStartValues(void);
-    CellValue findBestStep(int x, int y);
-    CellValue calculate(int x, int y, int h);
+    void calculateNeighbors(Cell *current);
+    Cell *calculate(int x, int y, int g);
     
     int m_width;
     int m_height;
     
     Cell **m_table;
-    DoubleLinkedList<CellValue> m_path;
+    DoubleLinkedList<Cell *> m_close;
+    DoubleLinkedList<Cell *> m_open;
     
     Tool m_tool;
     QPoint m_oldPos;
     
-    int m_x;
-    int m_y;
+    int m_startX;
+    int m_startY;
     int m_endX;
     int m_endY;
     

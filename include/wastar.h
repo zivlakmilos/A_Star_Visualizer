@@ -42,8 +42,10 @@ private:
     int m_height;
     
     Cell **m_table;
-    DoubleLinkedList<Cell *> m_close;
-    DoubleLinkedList<Cell *> m_open;
+    //DoubleLinkedList<Cell *> m_close;
+    //DoubleLinkedList<Cell *> m_open;
+    QVector<Cell *> m_close;
+    QVector<Cell *> m_open;
     
     Tool m_tool;
     QPoint m_oldPos;

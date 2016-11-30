@@ -197,7 +197,7 @@ void WAStar::findPath(void)
         {
             int bestStepIndex = 0;
             Cell *bestStep = m_open[0];
-            /*
+            
             for(int i = 1; i < m_open.count(); i++)
             {
                 if(m_open[i]->f() < bestStep->f())
@@ -206,8 +206,8 @@ void WAStar::findPath(void)
                     bestStepIndex = i;
                 }
             }
-            */
             
+            /*
             DoubleLinkedList<Cell *>::iterator it = m_open.start();
             int i;
             for(++it, i = 1; it != m_open.end(); it++, i++)
@@ -218,11 +218,12 @@ void WAStar::findPath(void)
                     bestStepIndex = i;
                 }
             }
+            */
             
             current = bestStep;
             m_close.append(current);
             m_open.remove(bestStepIndex);
-            current->state(Cell::StateStep);
+            //current->state(Cell::StateStep);
             
             repaint();
         }

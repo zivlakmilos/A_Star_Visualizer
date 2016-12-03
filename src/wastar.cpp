@@ -258,6 +258,26 @@ void WAStar::calculateNeighbors(Cell *current)
     {
         if(values[i])
         {
+            if(values[i]->state() == Cell::StateBlock)
+                continue;
+            
+            if(i % 2 == 0)
+            {
+                int prev = i == 0 ? 7 : i - 1;
+                int next = i == 7 ? 0 : i + 1;
+                bool skip = false;
+                
+                if(values[prev])
+                    if(values[prev]->state() == Cell::StateBlock)
+                        skip = true;
+                if(values[next])
+                    if(values[next]->state() == Cell::StateBlock)
+                        skip = true;
+                
+                if(skip)
+                    continue;
+            }
+            
             if(values[i]->state() != Cell::StateStart &&
                values[i]->state() != Cell::StateEnd)
                 values[i]->state(Cell::StateChecked);
@@ -276,9 +296,10 @@ Cell *WAStar::calculate(int x, int y, int g)
     
     Cell *result = m_table[y * m_width + x];
     
-    if(result->state() == Cell::StateBlock ||
-       (result->state() == Cell::StateChecked &&
-        result->g() <= g))
+    if(result->state() == Cell::StateBlock)
+        return result;
+    if(result->state() == Cell::StateChecked &&
+        result->g() <= g)
         return nullptr;
     
     result->h(abs(m_endX - x) + abs(m_endY - y));

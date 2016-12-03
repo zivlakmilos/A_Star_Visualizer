@@ -121,6 +121,7 @@ void WAStar::mousePressEvent(QMouseEvent *event)
     {
         clean();
         m_finish = false;
+        return;
     }
     
     switch(cell->state())

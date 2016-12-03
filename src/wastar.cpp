@@ -189,6 +189,8 @@ void WAStar::findPath(void)
     Cell *current = calculate(m_startX, m_startY, 0);
     m_close.append(current);
     
+    bool cantFind = false;
+    
     while(current->state() != Cell::StateEnd)
     {
         calculateNeighbors(current);
@@ -207,33 +209,31 @@ void WAStar::findPath(void)
                 }
             }
             
-            /*
-            DoubleLinkedList<Cell *>::iterator it = m_open.start();
-            int i;
-            for(++it, i = 1; it != m_open.end(); it++, i++)
-            {
-                if(it.value()->f() < bestStep->f())
-                {
-                    bestStep = it.value();
-                    bestStepIndex = i;
-                }
-            }
-            */
-            
             current = bestStep;
             m_close.append(current);
             m_open.remove(bestStepIndex);
             
             repaint();
+        } else
+        {
+            cantFind = true;
+            break;
         }
     }
     
-    current = current->parent();
-    while(current->state() != Cell::StateStart)
+    if(!cantFind)
     {
-        current->state(Cell::StateStep);
         current = current->parent();
-        repaint();
+        while(current->state() != Cell::StateStart)
+        {
+            current->state(Cell::StateStep);
+            current = current->parent();
+            repaint();
+        }
+    } else
+    {
+        QMessageBox::warning(this, tr("A* Visualizer"),
+                             tr("Path doesn't exists"));
     }
 }
 

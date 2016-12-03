@@ -32,6 +32,7 @@ protected:
     
 private:
     void clear(void);
+    void clean(void);
     QPoint mapCoordsToGrid(const QPoint &position);
     
     void calculateStartValues(void);
@@ -42,8 +43,6 @@ private:
     int m_height;
     
     Cell **m_table;
-    //DoubleLinkedList<Cell *> m_close;
-    //DoubleLinkedList<Cell *> m_open;
     QVector<Cell *> m_close;
     QVector<Cell *> m_open;
     
@@ -54,6 +53,8 @@ private:
     int m_startY;
     int m_endX;
     int m_endY;
+    
+    bool m_finish;
     
 public slots:
     void newMap(int width, int height);

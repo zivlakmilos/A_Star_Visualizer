@@ -29,6 +29,8 @@ void WAStar::newMap(int width, int height)
             m_table[y * m_width + x] = new Cell(x, y, this);
     m_table[m_height / 2 * m_width + 2]->state(Cell::StateStart);
     m_table[m_height / 2 * m_width + m_width - 3]->state(Cell::StateEnd);
+    
+    m_finish = false;
 }
 
 void WAStar::paintEvent(QPaintEvent *event)
@@ -101,10 +103,25 @@ void WAStar::clear(void)
     }
 }
 
+void WAStar::clean(void)
+{
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        if(m_table[i]->state() & (Cell::StateStep | Cell::StateChecked))
+            m_table[i]->state(Cell::StateFree);
+    }
+}
+
 void WAStar::mousePressEvent(QMouseEvent *event)
 {
     QPoint pos = mapCoordsToGrid(event->pos());
     Cell *cell = m_table[pos.y() * m_width + pos.x()];
+    
+    if(m_finish)
+    {
+        clean();
+        m_finish = false;
+    }
     
     switch(cell->state())
     {
@@ -235,6 +252,8 @@ void WAStar::findPath(void)
         QMessageBox::warning(this, tr("A* Visualizer"),
                              tr("Path doesn't exists"));
     }
+    
+    m_finish = true;
 }
 
 void WAStar::calculateNeighbors(Cell *current)
